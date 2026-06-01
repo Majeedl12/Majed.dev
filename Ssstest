@@ -4449,7 +4449,7 @@ buttons.Buttons.Button1.MouseButton1Click:Connect(function()
     end
     
     -- Actual key system for regular users
-    local url = "https://vr7-keysystem.netlify.app/?api=validate&key=VR7_12345678901234567890&hwid=test123" .. key
+    local url = "https://vr7-keysystem.netlify.app/?api=validate&key=" .. key
         local realkey = game:HttpGet(url)
         --print(realkey)
         if string.find(realkey, "true") then
@@ -4461,10 +4461,10 @@ end)
 
 -- Get Key
 buttons.Buttons.Button2.MouseButton1Click:Connect(function()
-    setclipboard("https://work.ink/2gD/deltaandroidkey")
+    setclipboard("https://vr7-keysystem.netlify.app")
     game.StarterGui:SetCore("SendNotification",
         {
-            Title = "Delta Android";
+            Title = "VR7 Android";
             Text = "Copied key link to clipboard!";
             Duration = 4;
         })
@@ -4857,7 +4857,7 @@ getgenv().is_iy = false
 
 ScriptSuggestion.Overlay.Holder.Showcase.MouseButton1Click:Connect(function()
     print("showcase clicked")
-    loadstring(game:HttpGet("https://gist.githubusercontent.com/lxnnydev/c533c374ca4c1dcef4e1e10e33fa4a0c/raw/03e74f184f801dad77d3ebe1e2f18c6ac87ca612/delta___IY.gistfile1.txt.lua",true))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 
     end)
 end;
