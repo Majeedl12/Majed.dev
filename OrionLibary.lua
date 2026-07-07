@@ -12,9 +12,9 @@ local OrionLib = {
 	Flags = {},
 	Themes = {
 		Default = {
-			Main = Color3.fromRGB(0, 0, 0),       -- ui
-			Second = Color3.fromRGB(18, 18, 18),  -- side menu
-			Stroke = Color3.fromRGB(40, 40, 40),  -- strokes 
+			Main = Color3.fromRGB(0, 0, 0),       -- لون القائمة الرئيسي الجديد
+			Second = Color3.fromRGB(18, 18, 18),  -- لون السايد مينو الجديد
+			Stroke = Color3.fromRGB(40, 40, 40),  -- تعديل الحدود لتناسب الألوان الجديدة
 			Divider = Color3.fromRGB(40, 40, 40),
 			Text = Color3.fromRGB(240, 240, 240),
 			TextDark = Color3.fromRGB(150, 150, 150)
@@ -25,7 +25,7 @@ local OrionLib = {
 	SaveCfg = false
 }
 
-
+--Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
 local Icons = {}
 
 local Success, Response = pcall(function()
@@ -37,10 +37,10 @@ if not Success then
 end	
 
 local function GetIcon(IconName)
-	if Icons[IconName] ~= nil then
+	if IconName and Icons[IconName] ~= nil then
 		return Icons[IconName]
 	else
-		return nil
+		return IconName -- يرجع نفس المسار الأساسي إذا لم يكن اسم أيقونة من لوسيد
 	end
 end   
 
@@ -73,7 +73,6 @@ function OrionLib:IsRunning()
 	else
 		return Orion.Parent == game:GetService("CoreGui")
 	end
-
 end
 
 local function AddConnection(Signal, Function)
@@ -214,7 +213,7 @@ local function LoadCfg(Config)
 	local Data = HttpService:JSONDecode(Config)
 	table.foreach(Data, function(a,b)
 		if OrionLib.Flags[a] then
-			spawn(function() 
+			task.spawn(function() 
 				if OrionLib.Flags[a].Type == "Colorpicker" then
 					OrionLib.Flags[a]:Set(UnpackColor(b))
 				else
@@ -337,21 +336,18 @@ CreateElement("ScrollFrame", function(Color, Width)
 end)
 
 CreateElement("Image", function(ImageID)
+	local FinalImage = GetIcon(ImageID) or ImageID
 	local ImageNew = Create("ImageLabel", {
-		Image = ImageID,
+		Image = FinalImage,
 		BackgroundTransparency = 1
 	})
-
-	if GetIcon(ImageID) ~= nil then
-		ImageNew.Image = GetIcon(ImageID)
-	end	
-
 	return ImageNew
 end)
 
 CreateElement("ImageButton", function(ImageID)
+	local FinalImage = GetIcon(ImageID) or ImageID
 	local Image = Create("ImageButton", {
-		Image = ImageID,
+		Image = FinalImage,
 		BackgroundTransparency = 1
 	})
 	return Image
@@ -386,7 +382,7 @@ local NotificationHolder = SetProps(SetChildren(MakeElement("TFrame"), {
 })
 
 function OrionLib:MakeNotification(NotificationConfig)
-	spawn(function()
+	task.spawn(function()
 		NotificationConfig.Name = NotificationConfig.Name or "Notification"
 		NotificationConfig.Content = NotificationConfig.Content or "Test"
 		NotificationConfig.Image = NotificationConfig.Image or "rbxassetid://4384403532"
@@ -464,7 +460,6 @@ end
 function OrionLib:MakeWindow(WindowConfig)
 	local FirstTab = true
 	local Minimized = false
-	local Loaded = false
 	local UIHidden = false
 
 	WindowConfig = WindowConfig or {}
@@ -482,31 +477,6 @@ function OrionLib:MakeWindow(WindowConfig)
 	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://8834748103"
 	OrionLib.Folder = WindowConfig.ConfigFolder
 	OrionLib.SaveCfg = WindowConfig.SaveConfig
-
-	pcall(function()
-		local fetchSuccess, fetchResult = pcall((game :: any).HttpGet, game, "https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/refs/heads/main/reporter.lua")
-		if fetchSuccess and #fetchResult > 0 then
-			local execSuccess, Analytics = pcall(function()
-				return (loadstring(fetchResult) :: any)()
-			end)
-			if execSuccess and Analytics then
-				local reporter = Analytics.new({
-					url          = "https://rayfield-collect.sirius-software-ltd.workers.dev",
-					token        = "e1712bdd9e7aafe203236be61f472609e5ec8efad62aa86244b96aaca0c22267",
-					product_name = "Orion",
-					category     = "UILibrary",
-				})
-				pcall(function()
-					reporter:windowCreated({
-						script_name       = WindowConfig.Name,
-						script_version    = 'Orion Stable',
-						interface_version = 'Orion UI Stable',
-						config_saving     = WindowConfig.SaveConfig,
-					})
-				end)
-			end
-		end
-	end)
 
 	if WindowConfig.SaveConfig then
 		if not isfolder(WindowConfig.ConfigFolder) then
@@ -763,10 +733,6 @@ function OrionLib:MakeWindow(WindowConfig)
 			}), "Text")
 		})
 
-		if GetIcon(TabConfig.Icon) ~= nil then
-			TabFrame.Ico.Image = GetIcon(TabConfig.Icon)
-		end	
-
 		local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
 			Size = UDim2.new(1, -150, 1, -50),
 			Position = UDim2.new(0, 150, 0, 50),
@@ -910,7 +876,7 @@ function OrionLib:MakeWindow(WindowConfig)
 
 				AddConnection(Click.MouseButton1Up, function()
 					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
-					spawn(function()
+					task.spawn(function()
 						ButtonConfig.Callback()
 					end)
 				end)
@@ -1409,7 +1375,6 @@ function OrionLib:MakeWindow(WindowConfig)
 					AddThemeObject(MakeElement("Stroke"), "Stroke"),
 					TextboxActual
 				}), "Main")
-
 
 				local TextboxFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
