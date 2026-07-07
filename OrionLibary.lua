@@ -639,7 +639,7 @@ function OrionLib:MakeWindow(WindowConfig)
 		Position = UDim2.new(0.1, 0, 0.1, 0),
 		BackgroundColor3 = Color3.fromRGB(9, 99, 195),
 		Image = "rbxassetid://104430657984183",
-		Visible = false,
+		Visible = true,
 		ZIndex = 10
 	}, {
 		Create("UICorner", {CornerRadius = UDim.new(0.3, 0)}),
@@ -720,10 +720,13 @@ function OrionLib:MakeWindow(WindowConfig)
 	end)
 
 	AddConnection(FloatingBtn.MouseButton1Click, function()
-		MainWindow.Visible = true
-		FloatingBtn.Visible = false
-		if Minimized then
-			ToggleUI()
+		if MainWindow.Visible then
+			MainWindow.Visible = false
+		else
+			MainWindow.Visible = true
+			if Minimized then
+				ToggleUI()
+			end
 		end
 	end)
 
@@ -731,10 +734,8 @@ function OrionLib:MakeWindow(WindowConfig)
 		if Input.KeyCode == Enum.KeyCode.RightShift then
 			if MainWindow.Visible then
 				MainWindow.Visible = false
-				FloatingBtn.Visible = true
 			else
 				MainWindow.Visible = true
-				FloatingBtn.Visible = false
 			end
 		end
 	end)
@@ -1691,6 +1692,23 @@ function OrionLib:MakeWindow(WindowConfig)
 			SectionConfig.Name = SectionConfig.Name or "Section"
 
 			local SectionFrame = SetChildren(SetProps(MakeElement("TFrame"), {
+				Size = UDim2.new(1, 0, 0, 26),
+				Parent = Container
+			}), {
+				AddThemeObject(SetProps(MakeElement("Label", SectionConfig.Name, 14), {
+					Size = UDim2.new(1, -12, 0, 16),
+					Position = UDim2.new(0, 0, 0, 3),
+					Font = Enum.Font.GothamSemibold
+				}), "TextDark"),
+				SetChildren(SetProps(MakeElement("TFrame"), {
+					AnchorPoint = Vector2.new(0, 0),
+					Size = UDim2.new(1, 0, 1, -24),
+					Position = UDim2.new(0, 0, 0, 23),
+					Name = "Holder"
+				}), {
+					MakeElement("List", 0, 6)
+				}),
+			}) sectionFrame = setChildren(setProps(makeElement("TFrame"), {
 				Size = UDim2.new(1, 0, 0, 26),
 				Parent = Container
 			}), {
