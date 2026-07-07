@@ -1,4 +1,4 @@
-Local UserInputService = game:GetService("UserInputService")
+local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
@@ -478,31 +478,6 @@ function OrionLib:MakeWindow(WindowConfig)
 	OrionLib.Folder = WindowConfig.ConfigFolder
 	OrionLib.SaveCfg = WindowConfig.SaveConfig
 
-	pcall(function()
-		local fetchSuccess, fetchResult = pcall((game :: any).HttpGet, game, "https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/refs/heads/main/reporter.lua")
-		if fetchSuccess and #fetchResult > 0 then
-			local execSuccess, Analytics = pcall(function()
-				return (loadstring(fetchResult) :: any)()
-			end)
-			if execSuccess and Analytics then
-				local reporter = Analytics.new({
-					url          = "https://rayfield-collect.sirius-software-ltd.workers.dev",
-					token        = "e1712bdd9e7aafe203236be61f472609e5ec8efad62aa86244b96aaca0c22267",
-					product_name = "Orion",
-					category     = "UILibrary",
-				})
-				pcall(function()
-					reporter:windowCreated({
-						script_name       = WindowConfig.Name,
-						script_version    = 'Orion Stable',
-						interface_version = 'Orion UI Stable',
-						config_saving     = WindowConfig.SaveConfig,
-					})
-				end)
-			end
-		end
-	end)
-
 	if WindowConfig.SaveConfig then
 		if not isfolder(WindowConfig.ConfigFolder) then
 			makefolder(WindowConfig.ConfigFolder)
@@ -644,8 +619,8 @@ function OrionLib:MakeWindow(WindowConfig)
 	}, {
 		Create("UICorner", {CornerRadius = UDim.new(0.28, 0)}), 
 		Create("UIStroke", {
-			Color = Color3.fromRGB(9, 99, 195), 
-			Thickness = 2.5,
+			Color = Color3.fromRGB(40, 40, 40), 
+			Thickness = 1.5,
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 		})
 	})
@@ -975,7 +950,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				ToggleConfig.Name = ToggleConfig.Name or "Toggle"
 				ToggleConfig.Default = ToggleConfig.Default or false
 				ToggleConfig.Callback = ToggleConfig.Callback or function() end
-				ToggleConfig.Color = ToggleConfig.Color or Color3.fromRGB(9, 99, 195)
+				ToggleConfig.Color = ToggleConfig.Color or Color3.fromRGB(40, 40, 40)
 				ToggleConfig.Flag = ToggleConfig.Flag or nil
 				ToggleConfig.Save = ToggleConfig.Save or false
 
@@ -1051,7 +1026,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				SliderConfig.Default = SliderConfig.Default or 50
 				SliderConfig.Callback = SliderConfig.Callback or function() end
 				SliderConfig.ValueName = SliderConfig.ValueName or ""
-				SliderConfig.Color = SliderConfig.Color or Color3.fromRGB(9, 149, 98)
+				SliderConfig.Color = SliderConfig.Color or Color3.fromRGB(40, 40, 40)
 				SliderConfig.Flag = SliderConfig.Flag or nil
 				SliderConfig.Save = SliderConfig.Save or false
 
@@ -1130,7 +1105,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				end      
 
 				Slider:Set(Slider.Value)
-				if SliderConfig.Flag then				
+				if SliderConfig.Flag loop then				
 					OrionLib.Flags[SliderConfig.Flag] = Slider
 				end
 				return Slider
