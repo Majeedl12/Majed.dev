@@ -632,7 +632,7 @@ function OrionLib:MakeWindow(WindowConfig)
 		WindowStuff
 	}), "Main")
 
-	-- زر الفلوتنج
+	-- Floating Button (Squircle, blue stroke, draggable)
 	local FloatingBtn = Create("ImageButton", {
 		Name = "FloatingButton",
 		Parent = Orion,
@@ -666,40 +666,29 @@ function OrionLib:MakeWindow(WindowConfig)
 
 	AddDraggingFunctionality(DragPoint, MainWindow)
 
-	-- ==================== تعديل سلوك زر الـ Minimize ====================
+	-- ==================== Minimize behavior (like Redz UI) ====================
 	local function ToggleUI()
 		if not Minimized then
-			-- عند التصغير: نخفي القائمة (WindowStuff) فقط، تطلع لفوق نحو القاعدة (الـ TopBar)
 			Minimized = true
 			MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
-			
-			-- نخفي عناصر القائمة
+			-- Hide the side panel and all content
 			WindowStuff.Visible = false
-			-- نخفي كل Container (محتوى التابات)
 			for _, Container in next, MainWindow:GetChildren() do
 				if Container.Name == "ItemContainer" then
 					Container.Visible = false
 				end
 			end
-			-- نخفي خط الفاصل العلوي (TopBar line) ليصبح الشكل نظيف
 			WindowTopBarLine.Visible = false
-			
-			-- نحرك MainWindow للأعلى فقط (نخفي الـ Y offset) بدون تحريك X
-			-- ونجعل حجم MainWindow يطابق حجم الـ TopBar فقط
+			-- Animate only height to TopBar size
 			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-				Size = UDim2.new(0, MainWindow.Size.X.Offset, 0, 50) -- العرض ثابت، الارتفاع 50 (TopBar فقط)
+				Size = UDim2.new(0, MainWindow.Size.X.Offset, 0, 50)
 			}):Play()
 		else
-			-- عند التكبير: نظهر القائمة (WindowStuff) والمحتويات
 			Minimized = false
 			MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
-			
-			-- نعيد الحجم الأصلي
 			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-				Size = UDim2.new(0, MainWindow.Size.X.Offset, 0, 344) -- العرض ثابت، الارتفاع الأصلي
+				Size = UDim2.new(0, MainWindow.Size.X.Offset, 0, 344)
 			}):Play()
-			
-			-- نظهر القائمة والمحتويات بعد الانتهاء من الأنيميشن أو أثناءه
 			WindowStuff.Visible = true
 			for _, Container in next, MainWindow:GetChildren() do
 				if Container.Name == "ItemContainer" then
@@ -714,20 +703,13 @@ function OrionLib:MakeWindow(WindowConfig)
 		ToggleUI()
 	end)
 
-	-- ==================== زر الفلوتنج: إخفاء/إظهار فوري بدون Tween ====================
+	-- ==================== Floating button hides/shows INSTANTLY ====================
 	AddConnection(FloatingBtn.MouseButton1Click, function()
-		if MainWindow.Visible then
-			-- إخفاء فوري
-			MainWindow.Visible = false
-		else
-			-- إظهار فوري
-			MainWindow.Visible = true
-		end
+		MainWindow.Visible = not MainWindow.Visible
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
 		if Input.KeyCode == Enum.KeyCode.RightShift then
-			-- اختياري: shift يخفي/يظهر فورياً أيضاً
 			MainWindow.Visible = not MainWindow.Visible
 		end
 	end)
@@ -789,7 +771,7 @@ function OrionLib:MakeWindow(WindowConfig)
 			}), "Text"),
 			AddThemeObject(SetProps(MakeElement("Label", TabConfig.Name, 14), {
 				Size = UDim2.new(1, -35, 1, 0),
-					Position = UDim2.new(0, 35, 0, 0),
+				Position = UDim2.new(0, 35, 0, 0),
 				Font = Enum.Font.GothamSemibold,
 				TextTransparency = 0.4,
 				Name = "Title"
