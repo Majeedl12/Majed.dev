@@ -632,18 +632,25 @@ function OrionLib:MakeWindow(WindowConfig)
 		WindowStuff
 	}), "Main")
 
+	-- تعديل وتصميم زر الـ Floating بشكل Squircle نظيف وستروك أزرق
 	local FloatingBtn = Create("ImageButton", {
 		Name = "FloatingButton",
 		Parent = Orion,
-		Size = UDim2.new(0, 50, 0, 50),
-		Position = UDim2.new(0.1, 0, 0.1, 0),
-		BackgroundColor3 = Color3.fromRGB(9, 99, 195),
-		Image = "rbxassetid://104430657984183",
+		Size = UDim2.new(0, 52, 0, 52),
+		Position = UDim2.new(0.05, 0, 0.15, 0),
+		BackgroundColor3 = Color3.fromRGB(15, 15, 15), -- خلفية غامقة متناسقة
+		Image = "rbxassetid://104430657984183", -- أيقونة التفعيل
 		Visible = true,
-		ZIndex = 10
+		ZIndex = 101,
+		Active = true,
+		Draggable = false
 	}, {
-		Create("UICorner", {CornerRadius = UDim.new(0.3, 0)}),
-		Create("UIStroke", {Color = Color3.fromRGB(255, 255, 255), Thickness = 2})
+		Create("UICorner", {CornerRadius = UDim.new(0.28, 0)}), -- نسبة انحناء الـ Squircle النظيفة
+		Create("UIStroke", {
+			Color = Color3.fromRGB(9, 99, 195), -- لون الستروك الأزرق تماماً كما طلبته
+			Thickness = 2.5,
+			ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		})
 	})
 
 	AddDraggingFunctionality(FloatingBtn, FloatingBtn)
@@ -719,14 +726,23 @@ function OrionLib:MakeWindow(WindowConfig)
 		ToggleUI()
 	end)
 
+	-- تشغيل ميزة الإخفاء والإظهار الفعلي والكامل للسكربت عند الضغط على الزر الطائر
 	AddConnection(FloatingBtn.MouseButton1Click, function()
 		if MainWindow.Visible then
+			local CloseTween = TweenService:Create(MainWindow, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+				Size = UDim2.new(0, 0, 0, 0),
+				BackgroundTransparency = 1
+			})
+			CloseTween:Play()
+			CloseTween.Completed:Wait()
 			MainWindow.Visible = false
 		else
 			MainWindow.Visible = true
-			if Minimized then
-				ToggleUI()
-			end
+			local OpenTween = TweenService:Create(MainWindow, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				Size = Minimized and UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50) or UDim2.new(0, 615, 0, 344),
+				BackgroundTransparency = 0
+			})
+			OpenTween:Play()
 		end
 	end)
 
