@@ -1,5 +1,13 @@
+-- تعطيل دوال التحقق قبل تحميل السكربت
+identifyexecutor = nil
+gethwid = function() return "FAKE_HWID" end
+getgenv().arceus = { is_ios = function() return false end }
+
+-- ثم حمل السكربت
 loadstring(game:HttpGet("https://raw.githubusercontent.com/SPDM-Team/Arceus-X-NEO-public/refs/heads/main/init.lua"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/SPDM-Team/Arceus-X-NEO-public/refs/heads/main/adapter.lua"))()
+
+-- ثم الصق محتوى ملف Neo source المعدل
 
 --[[local gethwid = isiosdevice() and function() 
 	return RBX_ANALITYCS_SERVICE:GetClientId()
